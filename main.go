@@ -15,20 +15,27 @@ var tmpl *template.Template
 
 const US = "US"
 const NA = "NAM"
-const CITY = "Bethesda"
+const CITY_CODE = "333558"
 const API_KEY = API.API_KEY
 
 func weather(w http.ResponseWriter, r *http.Request) {
-	data := structs.PageData{
-		Weaths: []structs.Weather{
-			{Temp: 69, Weath: "rainy", Day: "Monday"},
-			{Temp: 32, Weath: "snowy", Day: "Tuesday"},
-		},
+	var currentWeather []structs.CurrenntWeather
+	uri := fmt.Sprintf("http://dataservice.accuweather.com/currentconditions/v1/%s?apikey=%s", CITY_CODE, API_KEY)
+	resp, err := http.Get(uri)
+	if err != nil {
+		// TODO handle error
 	}
-	tmpl.Execute(w, data)
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		print(err.Error())
+	} else {
+		json.Unmarshal([]byte(body), &currentWeather)
+	}
+	tmpl.Execute(w, currentWeather[0])
 }
 
-func city_search(city string) string {
+func GetCityCode(city string) string {
 	var store []structs.WeatherResp
 	uri := fmt.Sprintf("http://dataservice.accuweather.com/locations/v1/cities/search?apikey=%s&q=%s", API_KEY, city)
 	resp, err := http.Get(uri)
@@ -38,24 +45,15 @@ func city_search(city string) string {
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	json.Unmarshal([]byte(body), &store)
-	print("test\n")
 	if err != nil {
 		print(err.Error())
 	}
-	sb := string(body)
-	//log.Printf(sb)
-	fmt.Println(store[0])
-
-	return sb
-
-	//return uri
+	return store[0].Key
 }
 
 func main() {
 	mux := http.NewServeMux()
 	tmpl = template.Must(template.ParseFiles("templates/index.gohtml"))
-	city_search("Bethesda")
 	mux.HandleFunc("/weather", weather)
-	//print(outp)
 	log.Fatal(http.ListenAndServe(":5000", mux))
 }

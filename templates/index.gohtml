@@ -5,17 +5,15 @@
     {{/* <link rel="stylesheet" href="/static/css/style.css"> */}}
 </head>
 <body>
-    <h1>Weather:</h1>
-
+    <h1>Time: {{.LocalObservationDateTime}}</h1>
     <ul>
-        {{range .Weaths}}
         <li>
-        <h2>{{.Day}}</h2>
-            <ul>
-                <li>Temp: {{.Temp}}</li>
-                <li>Weather: {{.Weath}}</li>
-            </ul>
+            <h2>Weather: {{.WeatherText}}</h2>
         </li>
+        <li>Temp: {{.Temperature.Imperial.Value}} {{.Temperature.Imperial.Unit}}</li>
+        <li><a href="{{.Link}}">Link</a></li>
+        {{if .HasPrecipitation}}
+        <li>{{ .PrecipitationType}}</li>
         {{end}}
     </ul>
     {{/* <script src="/static/js/script.js" type="text/javascript"></script> */}}

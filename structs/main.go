@@ -62,3 +62,27 @@ type WeatherResp struct {
 		} `json:"Elevation"`
 	} `json:"GeoPosition"`
 }
+
+type CurrenntWeather struct {
+	LocalObservationDateTime time.Time `json:"LocalObservationDateTime"`
+	EpochTime                int       `json:"EpochTime"`
+	WeatherText              string    `json:"WeatherText"`
+	WeatherIcon              int       `json:"WeatherIcon"`
+	HasPrecipitation         bool      `json:"HasPrecipitation"`
+	PrecipitationType        string    `json:"PrecipitationType"`
+	IsDayTime                bool      `json:"IsDayTime"`
+	Temperature              struct {
+		Metric struct {
+			Value    float32 `json:"Value"`
+			Unit     string  `json:"Unit"`
+			UnitType int     `json:"UnitType"`
+		} `json:"Metric"`
+		Imperial struct {
+			Value    float32 `json:"Value"`
+			Unit     string  `json:"Unit"`
+			UnitType int     `json:"UnitType"`
+		} `json:"Imperial"`
+	} `json:"Temperature"`
+	MobileLink string `json:"MobileLink"`
+	Link       string `json:"Link"`
+}
